@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KINETIC LABS — техническое бюро и венчурная студия</title>
+<meta name="description" content="KINETIC LABS — техническое бюро и венчурная студия. Инженерия, продукты и ИИ: от MVP до масштабируемых платформ.">
+<meta name="theme-color" content="#f4f4f5">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23ff4d00'/%3E%3Cpath d='M9 7v18M9 16l9-9M9 16l9 9' stroke='%230a0a0a' stroke-width='3' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-ink: #0a0a0a;
+    --color-paper: #f4f4f5;
+    --color-line: #d4d4d8;
+    --color-accent: #ff4d00;
+    --color-mute: #52525b;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --font-display: 'Unbounded', system-ui, sans-serif;
+  }
+</style>
+<style>
+/* =========================================================
+   BASE
+   ========================================================= */
+:root{
+  --ink:#0a0a0a; --paper:#f4f4f5; --white:#fff; --line:#d4d4d8; --accent:#ff4d00; --mute:#52525b;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --display:'Unbounded','Syne',system-ui,sans-serif;
+  --pad:clamp(20px,3vw,40px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:76px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:14px;line-height:1.6;overflow-x:hidden;overflow-x:clip;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body.lock{overflow:hidden}
+::selection{background:var(--accent);color:var(--ink)}
+[hidden]{display:none!important}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;color:inherit;cursor:pointer;border-radius:0}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.on-dark :focus-visible,.is-ink :focus-visible{outline-color:#fff}
+.skip{position:absolute;left:-999px;top:8px;z-index:200;background:var(--accent);color:var(--ink);padding:10px 14px;font-weight:700}
+.skip:focus{left:8px}
+.ic{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:square}
+
+/* =========================================================
+   GRID SYSTEM — тонкие линии через gap:1px
+   ========================================================= */
+.shell{max-width:1440px;margin-inline:auto;background:var(--white);border-inline:1px solid var(--line)}
+.gl{display:grid;gap:1px;background:var(--line)}
+.gl>*{background:var(--white);min-width:0}
+.gl>.is-paper{background:var(--paper)}
+.gl>.is-ink{background:var(--ink);color:#fff}
+.gl.dark{background:#27272a}
+.gl.dark>*{background:var(--ink)}
+.bb{border-bottom:1px solid var(--line)}
+.bt{border-top:1px solid var(--line)}
+section{border-bottom:1px solid var(--line)}
+.cell{padding:var(--pad)}
+
+.tag{font:500 11px/1.45 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.h2{font:700 clamp(26px,4.2vw,56px)/1 var(--display);letter-spacing:-.035em;text-transform:uppercase;margin:0;hyphens:auto;overflow-wrap:break-word}
+.sec-head>div{padding:var(--pad)}
+.sh-l{display:flex;flex-direction:column;justify-content:space-between;gap:14px}
+.sh-r p{margin:18px 0 0;max-width:56ch;color:#3f3f46;font-size:14px}
+
+/* Оранжевые маркеры по углам блоков */
+.mk{position:relative}
+.mk::after{content:'';position:absolute;inset:-4px;pointer-events:none;z-index:3;
+  background:
+    linear-gradient(var(--accent),var(--accent)) left top/8px 8px no-repeat,
+    linear-gradient(var(--accent),var(--accent)) right top/8px 8px no-repeat,
+    linear-gradient(var(--accent),var(--accent)) left bottom/8px 8px no-repeat,
+    linear-gradient(var(--accent),var(--accent)) right bottom/8px 8px no-repeat}
+.mk-v::after{inset:-4px 0}
+.mk-lg::after{background-size:12px 12px;inset:-6px 0}
+
+/* Кнопки */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;background:var(--accent);color:var(--ink);border:1px solid var(--ink);padding:17px 26px;font:700 13px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s,color .15s;text-align:center}
+.btn:hover{transform:translate(-3px,-3px);box-shadow:3px 3px 0 var(--ink)}
+.btn:active{transform:none;box-shadow:none}
+.btn:disabled{opacity:.7;cursor:progress;transform:none;box-shadow:none}
+.btn-ghost{background:transparent}
+.btn-ghost:hover{background:var(--ink);color:#fff}
+.btn-sq{width:44px;height:44px;padding:0}
+.btn-block{width:100%;height:100%;border:0;padding:0 20px}
+.btn-block:hover{transform:none;box-shadow:none;background:var(--ink);color:#fff}
+.is-ink .btn,.on-dark .btn{border-color:var(--accent)}
+.is-ink .btn:hover,.on-dark .btn:hover{box-shadow:3px 3px 0 #fff}
+
+/* Reveal */
+.js .rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.js .rv.in{opacity:1;transform:none}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+.site-header{position:sticky;top:0;z-index:50;background:var(--white);border-bottom:1px solid var(--line)}
+.nav-grid{grid-template-columns:1fr 64px}
+.logo{display:flex;align-items:center;gap:12px;padding:0 20px;height:64px}
+.logo-t{font:800 15px/1 var(--display);letter-spacing:-.02em;text-transform:uppercase}
+.logo-t span{font-weight:500;margin-left:6px;color:var(--mute)}
+.nav-links,.nav-cta{display:none}
+.nav-links{align-items:center;justify-content:space-evenly;gap:12px;padding:0 24px}
+.nav-link{display:inline-flex;font:500 13px/1 var(--mono);letter-spacing:.03em;padding:12px 2px;white-space:pre}
+.nav-link::before,.nav-link::after{display:inline-block;opacity:0;transition:opacity .2s,transform .2s;white-space:pre}
+.nav-link::before{content:'[ ';transform:translateX(8px)}
+.nav-link::after{content:' ]';transform:translateX(-8px)}
+.nav-link:hover::before,.nav-link:hover::after{opacity:.5;transform:none}
+.nav-link.active{font-weight:700}
+.nav-link.active::before,.nav-link.active::after{opacity:1;transform:none;color:var(--accent)}
+.burger{display:grid;place-content:center;gap:5px;background:var(--white);border:0}
+.burger span{display:block;width:22px;height:2px;background:var(--ink);transition:transform .2s,opacity .2s}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-menu{border-top:1px solid var(--line);background:var(--white);max-height:calc(100dvh - 65px);overflow:auto}
+.mobile-menu a.mm-link{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.mobile-menu a.mm-link span{color:var(--accent);font-weight:700}
+.mobile-menu .btn{width:100%;border-left:0;border-right:0;border-bottom:0;padding:22px}
+@media(min-width:1024px){
+  .nav-grid{grid-template-columns:300px 1fr 280px}
+  .nav-links{display:flex}.nav-cta{display:block}.burger{display:none}
+  .logo{height:72px}
+  .mobile-menu{display:none!important}
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.meta>div{display:flex;align-items:center;gap:10px;padding:12px clamp(12px,2vw,24px);font:500 11px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.meta .sqm{color:var(--accent);font-size:14px;line-height:1}
+.dot{width:8px;height:8px;background:var(--accent);flex:none;animation:pulse 1.6s steps(2) infinite}
+@keyframes pulse{50%{opacity:.15}}
+.title-block{position:relative;padding:clamp(18px,2.6vw,36px) clamp(16px,2.4vw,32px) clamp(14px,2vw,28px);border-bottom:1px solid var(--line);background:var(--white)}
+.title-top{display:flex;justify-content:space-between;gap:16px}
+.fit{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:-.04em;line-height:.88;margin:0}
+.fit-line{display:block;width:max-content;white-space:nowrap}
+.hero-title{font-size:12vw;margin-top:clamp(18px,2.6vw,40px)}
+.sq{display:inline-block;width:.13em;height:.13em;background:var(--accent);margin-left:.05em}
+.hero-title .fit-line{animation:wipeIn .95s cubic-bezier(.7,0,.2,1) backwards}
+.hero-title .fit-line:nth-child(2){animation-delay:.14s}
+@keyframes wipeIn{from{clip-path:inset(-20% 100% -20% 0)}to{clip-path:inset(-20% -5% -20% -5%)}}
+
+.hero-left{display:flex;flex-direction:column}
+.hero-copy{order:-1;flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:22px;padding:var(--pad)}
+.eyebrow{margin:0;font:700 13px/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.eyebrow span{color:var(--accent);margin-right:6px;font-size:16px}
+.lead{margin:0;max-width:48ch;font-size:15px;line-height:1.75;color:#3f3f46}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px}
+.stats{border-top:1px solid var(--line)}
+.stat{display:flex;flex-direction:column;justify-content:space-between;gap:12px;min-height:128px;padding:clamp(14px,2vw,28px)}
+.stat-n{font:700 clamp(22px,3.1vw,44px)/1 var(--display);letter-spacing:-.04em;font-variant-numeric:tabular-nums;white-space:nowrap}
+@media(min-width:1024px){
+  .hero-copy{order:0}
+  .stats{border-top:0;border-bottom:1px solid var(--line)}
+  .hero-title{font-size:min(12vw,170px)}
+}
+
+/* Технический блок */
+.tech{display:flex;flex-direction:column}
+.tech-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px clamp(14px,2vw,22px);border-bottom:1px solid var(--line);font:500 11px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.tech-bar b{background:var(--ink);color:#fff;padding:3px 6px;margin-right:6px}
+.hide-xs{display:none}
+@media(min-width:480px){.hide-xs{display:inline}}
+.tech-stage{position:relative;flex:1;min-height:340px;background-color:var(--white);
+  background-image:linear-gradient(rgba(10,10,10,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(10,10,10,.06) 1px,transparent 1px);
+  background-size:32px 32px;background-position:center}
+@media(min-width:768px){.tech-stage{min-height:460px}}
+.tech-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
+.wipe{animation:wipe .55s steps(8) both}
+@keyframes wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.reg{position:absolute;width:14px;height:14px;border:0 solid var(--ink);pointer-events:none}
+.reg.tl{top:12px;left:12px;border-width:1px 0 0 1px}
+.reg.tr{top:12px;right:12px;border-width:1px 1px 0 0}
+.reg.bl{bottom:12px;left:12px;border-width:0 0 1px 1px}
+.reg.br{bottom:12px;right:12px;border-width:0 1px 1px 0}
+.stage-tag{position:absolute;left:32px;bottom:16px;font:500 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);pointer-events:none}
+.tech-ctl{position:relative;display:flex;align-items:stretch;border-top:1px solid var(--line);background:var(--white)}
+.prog{position:absolute;left:0;right:0;top:-1px;height:2px;background:transparent;pointer-events:none}
+.prog i{display:block;height:100%;background:var(--accent);transform-origin:left;transform:scaleX(0)}
+.sq-btn{width:56px;min-height:60px;display:grid;place-items:center;background:var(--white);border:0;border-right:1px solid var(--line);font:700 20px/1 var(--mono);transition:background .15s}
+.sq-btn:hover{background:var(--accent)}
+.ctl-info{flex:1;min-width:0;padding:10px 16px;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.ctl-title{font:700 13px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.ctl-count{display:grid;place-items:center;padding:0 18px;border-left:1px solid var(--line);font:700 13px/1 var(--mono);letter-spacing:.06em}
+.ctl-count span{color:var(--mute);font-weight:500}
+
+/* =========================================================
+   PARTNERS + MARQUEE
+   ========================================================= */
+.strip-head{display:flex;justify-content:space-between;gap:12px;padding:14px clamp(16px,2.4vw,32px);border-bottom:1px solid var(--line)}
+.partner{position:relative;display:grid;place-items:center;min-height:128px;padding:20px;color:#71717a;transition:color .2s,background .2s}
+.partner:hover{color:var(--ink);background:var(--paper)}
+.partner svg{width:100%;max-width:200px;height:auto}
+.partner .tag{position:absolute;left:12px;top:10px;font-size:10px;color:#a1a1aa}
+.marquee{background:var(--ink);color:#fff;overflow:hidden;border-bottom:1px solid var(--ink)}
+.marquee-track{display:flex;width:max-content;animation:marq 48s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee span{display:inline-flex;align-items:center;gap:28px;padding:14px 14px 14px 0;font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.marquee span::after{content:'▪';color:var(--accent);font-size:16px}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* =========================================================
+   BENTO
+   ========================================================= */
+.bento{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:26px;min-height:340px;padding:clamp(20px,2.6vw,36px);background:var(--white);color:var(--ink);transition:background .25s,color .25s;outline-offset:-4px}
+.bento::after{content:'';position:absolute;inset:-4px;pointer-events:none;z-index:3;opacity:0;transition:opacity .2s;
+  background:
+    linear-gradient(var(--accent),var(--accent)) left top/8px 8px no-repeat,
+    linear-gradient(var(--accent),var(--accent)) right top/8px 8px no-repeat,
+    linear-gradient(var(--accent),var(--accent)) left bottom/8px 8px no-repeat,
+    linear-gradient(var(--accent),var(--accent)) right bottom/8px 8px no-repeat}
+.bento-top{display:flex;justify-content:space-between;align-items:flex-start}
+.bento-n{font:700 15px/1 var(--mono);letter-spacing:.04em;color:var(--mute);transition:color .25s}
+.bento-mid{flex:1;display:flex;align-items:center}
+.bento-ic{width:150px;height:auto;color:var(--ink);transition:color .25s,transform .4s}
+.bento h3{margin:0 0 12px;font:700 clamp(20px,2.1vw,30px)/1.05 var(--display);letter-spacing:-.03em;text-transform:uppercase;hyphens:auto;overflow-wrap:break-word}
+.bento p{margin:0 0 16px;max-width:52ch;font-size:13.5px;color:var(--mute);transition:color .25s}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.chips li{border:1px solid var(--line);padding:4px 8px;font:500 11px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;transition:border-color .25s}
+.bento:hover,.bento:focus-within,.bento:focus{background:var(--ink);color:#fff}
+.bento:hover::after,.bento:focus-within::after,.bento:focus::after{opacity:1}
+.bento:hover .bento-n,.bento:focus-within .bento-n,.bento:focus .bento-n{color:var(--accent)}
+.bento:hover p,.bento:focus-within p,.bento:focus p{color:#a1a1aa}
+.bento:hover .bento-ic,.bento:focus-within .bento-ic,.bento:focus .bento-ic{color:#fff;transform:translateX(6px)}
+.bento:hover .chips li,.bento:focus-within .chips li,.bento:focus .chips li{border-color:#3f3f46}
+.bento:hover .btn,.bento:focus-within .btn{border-color:var(--accent)}
+.bento .btn .ic{transition:transform .25s}
+.bento:hover .btn .ic{transform:rotate(-45deg)}
+
+/* =========================================================
+   CALCULATOR
+   ========================================================= */
+.calc-ctl{padding:var(--pad);display:flex;flex-direction:column;gap:28px}
+.fs{border:0;margin:0;padding:0;min-width:0}
+.fs legend{display:flex;align-items:center;gap:10px;padding:0;margin-bottom:12px;font:700 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.fs legend b{background:var(--accent);color:var(--ink);padding:4px 6px}
+.boxed{border:1px solid var(--line)}
+.opt{position:relative;display:block;cursor:pointer}
+.opt input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:2}
+.opt-body{display:flex;flex-direction:column;gap:6px;height:100%;padding:16px 18px;background:var(--white);color:var(--ink);transition:background .15s,color .15s}
+.opt:hover .opt-body{background:var(--paper)}
+.opt input:checked+.opt-body{background:var(--ink);color:#fff}
+.opt input:focus-visible+.opt-body{outline:2px solid var(--accent);outline-offset:-5px}
+.opt-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.opt-mark{width:12px;height:12px;border:1px solid currentColor;flex:none;transition:background .15s}
+.opt input:checked+.opt-body .opt-mark{background:var(--accent);border-color:var(--accent)}
+.opt-t{font:700 13px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.opt-d{font-size:12px;line-height:1.5;color:var(--mute)}
+.opt-p{font-size:12px;font-weight:600;margin-top:auto;padding-top:6px}
+.opt input:checked+.opt-body .opt-d{color:#a1a1aa}
+.opt-row .opt-body{flex-direction:row;align-items:center;justify-content:space-between;gap:12px}
+.opt-row .opt-t{font-size:12px}
+.opt-row .opt-p{margin:0;padding:0;white-space:nowrap}
+.opt-lbl{display:flex;align-items:center;gap:12px}
+
+.gl>.term{background:var(--ink);color:#e4e4e7;display:flex;flex-direction:column}
+.term-bar{display:flex;justify-content:space-between;gap:10px;padding:13px clamp(16px,2vw,24px);border-bottom:1px solid #27272a;font:500 11px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#a1a1aa}
+.term-bar b{color:var(--accent);font-weight:700}
+.term-body{flex:1;padding:clamp(18px,2.4vw,28px);display:flex;flex-direction:column;gap:9px;font-size:13px}
+.term-cmd{margin:0 0 6px;color:#a1a1aa}
+.term-cmd::before{content:'$ ';color:var(--accent)}
+.tl{display:flex;align-items:baseline;gap:8px;text-transform:uppercase;letter-spacing:.04em;font-size:12.5px}
+.tl>span{color:#a1a1aa;white-space:nowrap}
+.tl>i{flex:1;min-width:12px;border-bottom:1px dotted #52525b;transform:translateY(-3px)}
+.tl>b{color:#fff;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.tl .acc{color:var(--accent)}
+.tl-sep{margin:6px 0;border:0;border-top:1px dashed #3f3f46}
+.flash{animation:flash .6s ease-out}
+@keyframes flash{0%{background:var(--accent);color:var(--ink)}100%{background:transparent}}
+.term-total{margin-top:6px}
+.total-n{font:700 clamp(26px,3vw,40px)/1.1 var(--display);letter-spacing:-.04em;color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap;margin:8px 0 6px}
+.range{font-size:12px;color:#a1a1aa;text-transform:uppercase;letter-spacing:.04em}
+.seg{display:flex;height:10px;margin-top:16px;background:#27272a}
+.seg i{display:block;height:100%;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#a1a1aa}
+.legend span::before{content:'■ ';color:var(--c)}
+.term-foot{padding:clamp(18px,2.4vw,28px);border-top:1px solid #27272a;display:flex;flex-direction:column;gap:14px}
+.term-status{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#a1a1aa}
+.term-status::before{content:'> ';color:var(--accent)}
+.caret{display:inline-block;width:8px;height:14px;background:var(--accent);margin-left:6px;vertical-align:-2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.note{margin:0;font-size:11px;line-height:1.5;color:#71717a}
+
+/* =========================================================
+   PROJECTS
+   ========================================================= */
+.proj-head{display:none;background:var(--paper)}
+.proj{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-areas:"n y" "main main" "sec metric";gap:10px 16px;padding:22px 20px;background:var(--white);border-bottom:1px solid var(--line);transition:background .2s,color .2s,box-shadow .2s;outline-offset:-4px}
+.proj:last-child{border-bottom:0}
+.p-n{grid-area:n;font:700 13px/1 var(--mono);color:var(--accent)}
+.p-year{grid-area:y;font:500 12px/1 var(--mono);color:var(--mute)}
+.p-main{grid-area:main}
+.p-main h3{margin:0 0 6px;font:700 clamp(18px,1.7vw,24px)/1.1 var(--display);letter-spacing:-.03em;text-transform:uppercase}
+.p-main p{margin:0;font-size:13px;color:var(--mute);max-width:56ch;transition:color .2s}
+.p-sec{grid-area:sec;font:500 11px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;align-self:end}
+.p-metric{grid-area:metric;text-align:right;font-size:12px;line-height:1.35;color:var(--mute);transition:color .2s}
+.p-metric b{display:block;font:700 clamp(18px,2vw,26px)/1.1 var(--display);letter-spacing:-.03em;color:var(--ink);transition:color .2s}
+.p-arrow{display:none}
+.proj:hover,.proj:focus-visible{background:var(--ink);color:#fff;box-shadow:inset 5px 0 0 var(--accent)}
+.proj:hover .p-main p,.proj:focus-visible .p-main p,.proj:hover .p-metric,.proj:focus-visible .p-metric,.proj:hover .p-year,.proj:focus-visible .p-year{color:#a1a1aa}
+.proj:hover .p-metric b,.proj:focus-visible .p-metric b{color:#fff}
+@media(min-width:1024px){
+  .proj-head{display:grid}
+  .proj-head,.proj{grid-template-columns:72px minmax(0,1.7fr) minmax(0,1fr) 90px minmax(0,1.2fr) 72px;grid-template-areas:none;gap:0;padding:0}
+  .proj-head>span{padding:12px 20px;border-left:1px solid var(--line)}
+  .proj-head>span:first-child{border-left:0}
+  .proj>*{grid-area:auto;padding:26px 20px;border-left:1px solid var(--line);align-self:stretch;display:flex;flex-direction:column;justify-content:center;transition:border-color .2s}
+  .proj>.p-n{border-left:0}
+  .proj:hover>*,.proj:focus-visible>*{border-color:#27272a}
+  .p-main{display:block!important}
+  .p-metric{text-align:left}
+  .p-arrow{display:grid!important;place-items:center}
+  .p-arrow .ic{width:18px;height:18px;transition:transform .25s,color .25s}
+  .proj:hover .p-arrow .ic{color:var(--accent);transform:translateX(4px)}
+  .p-n,.p-year,.p-sec{order:0}
+  /* порядок колонок: n, main, sec, year, metric, arrow */
+  .proj .p-n{order:1}.proj .p-main{order:2}.proj .p-sec{order:3}.proj .p-year{order:4}.proj .p-metric{order:5}.proj .p-arrow{order:6}
+}
+
+/* =========================================================
+   STACK
+   ========================================================= */
+.stack-cell{position:relative;min-height:220px;padding:clamp(18px,2.2vw,30px);display:flex;flex-direction:column;justify-content:space-between;gap:20px;transition:background .2s}
+.stack-cell:hover{background:var(--paper)}
+.stack-cell h3{margin:0;display:flex;justify-content:space-between;font:700 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.stack-cell h3 span{color:var(--mute);font-weight:500}
+.stack-cell ul{list-style:none;margin:0;padding:0;display:grid;gap:7px;font-size:13px}
+.stack-cell li::before{content:'▪';color:var(--accent);margin-right:10px}
+
+/* =========================================================
+   FAQ
+   ========================================================= */
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-item:last-child{border-bottom:0}
+.faq-q{display:flex;align-items:center;gap:clamp(12px,2vw,24px);width:100%;padding:clamp(18px,2.2vw,28px) var(--pad);background:transparent;border:0;text-align:left;transition:background .15s}
+.faq-q:hover{background:var(--paper)}
+.faq-n{font:700 12px/1 var(--mono);color:var(--mute);flex:none}
+.faq-t{flex:1;font:600 clamp(14px,1.5vw,17px)/1.4 var(--mono)}
+.faq-i{position:relative;flex:none;width:30px;height:30px;border:1px solid var(--ink);transition:background .2s,border-color .2s}
+.faq-i::before,.faq-i::after{content:'';position:absolute;left:50%;top:50%;width:12px;height:2px;background:var(--ink);transform:translate(-50%,-50%);transition:transform .25s}
+.faq-i::after{transform:translate(-50%,-50%) rotate(90deg)}
+.faq-item.open .faq-i{background:var(--accent);border-color:var(--accent)}
+.faq-item.open .faq-i::after{transform:translate(-50%,-50%) rotate(0)}
+.faq-a{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .3s ease,visibility 0s .3s}
+.faq-item.open .faq-a{grid-template-rows:1fr;visibility:visible;transition:grid-template-rows .3s ease,visibility 0s}
+.faq-a>div{overflow:hidden}
+.faq-a p{margin:0;padding:0 var(--pad) clamp(20px,2.4vw,30px) calc(var(--pad) + 36px);max-width:70ch;color:#3f3f46;font-size:14px;line-height:1.75}
+@media(max-width:640px){.faq-a p{padding-left:var(--pad)}}
+
+/* =========================================================
+   CTA + FOOTER
+   ========================================================= */
+.cta{background:var(--ink);color:#fff;border-bottom:1px solid #27272a}
+.cta-title{color:#fff;font-size:12vw}
+@media(min-width:1024px){.cta-title{font-size:min(12vw,150px)}}
+.cta-wrap{padding:clamp(28px,4vw,56px) clamp(16px,2.4vw,32px) clamp(24px,3vw,40px);border-inline:1px solid #27272a;max-width:1440px;margin-inline:auto}
+.cta-row>div{padding:var(--pad);display:flex;align-items:center}
+.cta-row p{margin:0;max-width:52ch;color:#a1a1aa;font-size:14px}
+.cta-row .btn{padding:22px 34px;width:100%}
+.footer{background:var(--ink);color:#fff}
+.footer .shell{background:var(--ink);border-color:#27272a}
+.f-col{padding:var(--pad);display:flex;flex-direction:column;gap:14px;font-size:13px}
+.f-col h4{margin:0 0 4px;font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#a1a1aa}
+.f-col a{display:inline-block;color:#e4e4e7;transition:color .15s,transform .15s}
+.f-col a:hover{color:var(--accent);transform:translateX(4px)}
+.f-col p{margin:0;color:#a1a1aa;max-width:36ch}
+.f-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 24px;padding:18px var(--pad);border-top:1px solid #27272a;font:500 11px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#a1a1aa}
+.f-bottom a:hover{color:var(--accent)}
+.ok-dot{display:inline-block;width:8px;height:8px;background:var(--accent);margin-right:8px;animation:pulse 1.6s steps(2) infinite}
+.f-col a.logo{display:flex;align-items:center}
+.footer .logo{padding:0;height:auto}
+.term .btn{border-color:var(--accent)}
+.term .btn:hover{box-shadow:3px 3px 0 #fff}
+.term :focus-visible,.modal-bar :focus-visible,.cta :focus-visible,.footer :focus-visible{outline-color:#fff}
+.footer .logo-t span{color:#a1a1aa}
+
+/* =========================================================
+   MODAL + TOAST
+   ========================================================= */
+.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .2s}
+.modal.open{opacity:1}
+.modal-bd{position:absolute;inset:0;background:rgba(10,10,10,.74)}
+.modal-panel{position:relative;width:min(700px,100%);background:var(--white);border:2px solid var(--ink);box-shadow:10px 10px 0 var(--accent);transform:translateY(14px);transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+.modal.open .modal-panel{transform:none}
+.modal-scroll{max-height:calc(100dvh - 36px);overflow:auto;overscroll-behavior:contain}
+.modal-bar{position:sticky;top:0;z-index:4;display:flex;justify-content:space-between;align-items:stretch;background:var(--ink);color:#fff;font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.modal-bar>span{display:flex;align-items:center;gap:10px;padding:0 16px}
+.modal-bar>span::before{content:'';width:8px;height:8px;background:var(--accent)}
+.modal-x{width:52px;min-height:48px;background:transparent;color:#fff;border:0;border-left:1px solid #3f3f46;font:700 14px/1 var(--mono);transition:background .15s,color .15s}
+.modal-x:hover{background:var(--accent);color:var(--ink)}
+.modal-x:focus-visible{outline-color:#fff;outline-offset:-4px}
+.modal-body{padding:clamp(20px,3vw,36px)}
+.modal-body h2{margin:0 0 8px;font:700 clamp(22px,3.4vw,34px)/1.05 var(--display);letter-spacing:-.035em;text-transform:uppercase}
+.modal-body>p,.modal-body .sub{margin:0 0 20px;color:#3f3f46;font-size:13.5px}
+.est-note{display:flex;gap:12px;align-items:flex-start;margin:0 0 20px;padding:12px 14px;border:1px dashed var(--ink);background:var(--paper);font-size:12px;line-height:1.5}
+.est-note b{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:2px}
+.est-note i{flex:none;width:8px;height:8px;margin-top:5px;background:var(--accent)}
+.form-grid{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:600px){.form-grid{grid-template-columns:1fr 1fr}.form-grid .full{grid-column:1/-1}}
+.field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.field>label,.field>.lbl{font:600 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.field>label i{color:var(--accent);font-style:normal}
+.input{width:100%;border:1px solid var(--ink);background:var(--white);padding:13px 14px;font:500 14px/1.4 var(--mono);color:var(--ink);border-radius:0;transition:box-shadow .15s}
+.input::placeholder{color:#a1a1aa}
+.input:focus{outline:none;box-shadow:4px 4px 0 var(--accent)}
+select.input{appearance:none;-webkit-appearance:none;padding-right:38px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%230a0a0a' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+textarea.input{resize:vertical;min-height:96px}
+.input[aria-invalid="true"]{border-color:var(--accent);border-width:2px;padding:12px 13px}
+.err{min-height:15px;font-size:11.5px;line-height:1.3;color:#c23b00;font-weight:600}
+.agree{display:flex;gap:12px;align-items:flex-start;font-size:12px;line-height:1.5;color:#3f3f46;cursor:pointer}
+.agree input{appearance:none;-webkit-appearance:none;flex:none;width:20px;height:20px;margin:1px 0 0;border:1px solid var(--ink);background:var(--white);cursor:pointer}
+.agree input:checked{background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10' viewBox='0 0 12 10'%3E%3Cpath d='M1 5l3.5 3.5L11 1.5' fill='none' stroke='%230a0a0a' stroke-width='2'/%3E%3C/svg%3E") center/12px no-repeat}
+.agree input[aria-invalid="true"]{outline:2px solid var(--accent);outline-offset:1px}
+.done-ic{display:grid;place-items:center;width:56px;height:56px;background:var(--accent);border:1px solid var(--ink);margin-bottom:20px}
+.done-ic svg{width:28px;height:28px;stroke:var(--ink);stroke-width:3;fill:none}
+.ticket{display:inline-block;margin:6px 0 18px;padding:8px 12px;background:var(--ink);color:#fff;font:700 13px/1 var(--mono);letter-spacing:.14em}
+.ticket span{color:var(--accent)}
+.dl{margin:0 0 20px;border:1px solid var(--ink)}
+.dl>div{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:12.5px}
+.dl>div:last-child{border-bottom:0}
+.dl dt{color:var(--mute);text-transform:uppercase;letter-spacing:.08em;font-size:11px;padding-top:1px}
+.dl dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.log{margin:0 0 22px;padding:14px;background:var(--ink);color:#a1a1aa;font-size:12px;line-height:1.7;list-style:none}
+.log li::before{content:'> ';color:var(--accent)}
+.log li b{color:#fff;font-weight:600}
+.log li{opacity:0;animation:logIn .3s forwards}
+.log li:nth-child(1){animation-delay:.1s}.log li:nth-child(2){animation-delay:.45s}.log li:nth-child(3){animation-delay:.8s}.log li:nth-child(4){animation-delay:1.15s}
+@keyframes logIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.toast{position:fixed;z-index:120;left:16px;right:16px;bottom:16px;max-width:440px;display:flex;gap:12px;align-items:flex-start;padding:16px 18px;background:var(--ink);color:#fff;border:1px solid var(--accent);box-shadow:6px 6px 0 var(--accent);font-size:12.5px;line-height:1.5;transform:translateY(24px);opacity:0;transition:transform .3s,opacity .3s}
+@media(min-width:640px){.toast{left:auto;right:24px;bottom:24px}}
+.toast.show{transform:none;opacity:1}
+.toast i{flex:none;width:10px;height:10px;margin-top:5px;background:var(--accent)}
+.toast b{display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#a1a1aa;margin-bottom:2px}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .js .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- SVG sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 16 16"><path d="M2 8h11M9 3l5 5-5 5"/></symbol>
+  <symbol id="i-down" viewBox="0 0 16 16"><path d="M8 2v11M3 9l5 5 5-5"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Перейти к содержимому</a>
+
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
+<header class="site-header" id="top">
+  <div class="shell">
+    <div class="gl nav-grid">
+      <a href="#top" class="logo" aria-label="KINETIC LABS — на главную">
+        <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" fill="#ff4d00"/><path d="M9 7v18M9 16l9-9M9 16l9 9" stroke="#0a0a0a" stroke-width="3" fill="none" stroke-linecap="square"/><rect x="21" y="21" width="4" height="4" fill="#0a0a0a"/></svg>
+        <span class="logo-t">Kinetic<span>Labs</span></span>
+      </a>
+      <nav class="nav-links" aria-label="Основная навигация">
+        <a class="nav-link active" href="#programs" data-spy="programs">Программы</a>
+        <a class="nav-link" href="#projects" data-spy="projects">Проекты</a>
+        <a class="nav-link" href="#stack" data-spy="stack">Стек</a>
+        <a class="nav-link" href="#faq" data-spy="faq">FAQ</a>
+      </nav>
+      <div class="nav-cta"><button type="button" class="btn btn-block" data-open-modal>Подать заявку</button></div>
+      <button type="button" class="burger" id="burger" aria-expanded="false" aria-controls="mobileMenu" aria-label="Открыть меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu" hidden>
+    <a class="mm-link" href="#programs">Программы <span>01</span></a>
+    <a class="mm-link" href="#projects">Проекты <span>02</span></a>
+    <a class="mm-link" href="#stack">Стек <span>03</span></a>
+    <a class="mm-link" href="#faq">FAQ <span>04</span></a>
+    <button type="button" class="btn" data-open-modal>Подать заявку <svg class="ic"><use href="#i-arrow"/></svg></button>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- =========================================================
+     HERO
+     ========================================================= -->
+<section id="hero" aria-label="Первый экран">
+  <div class="shell">
+    <div class="gl meta grid-cols-2 lg:grid-cols-4 bb">
+      <div><span class="sqm">▪</span> REF: KL-2026-A</div>
+      <div><span class="dot"></span> Приём заявок: открыт</div>
+      <div>52.5200°N / 13.4050°E</div>
+      <div>UTC <span id="clock">00:00:00</span></div>
+    </div>
+
+    <div class="title-block mk mk-lg mk-v">
+      <div class="title-top">
+        <span class="tag">[ 001 ] Создаём будущее</span>
+        <span class="tag hide-xs">Техническое бюро / Венчурная студия</span>
+      </div>
+      <h1 class="fit hero-title" id="heroTitle" data-fit aria-label="Building Tomorrow — создаём будущее">
+        <span class="fit-line" aria-hidden="true">Building</span>
+        <span class="fit-line" aria-hidden="true">Tomorrow<span class="sq"></span></span>
+      </h1>
+    </div>
+
+    <div class="gl grid-cols-1 lg:grid-cols-12">
+      <!-- Левая колонка -->
+      <div class="lg:col-span-5 hero-left">
+        <div class="gl stats grid-cols-2">
+          <div class="stat is-paper"><div class="stat-n" data-count="128" data-suffix="+">128+</div><div class="tag">Запущенных продуктов</div></div>
+          <div class="stat"><div class="stat-n" data-count="14">14</div><div class="tag">Венчурных проектов</div></div>
+          <div class="stat"><div class="stat-n" data-count="9">9</div><div class="tag">Лет на рынке</div></div>
+          <div class="stat is-paper"><div class="stat-n" data-count="99.98" data-dec="2" data-suffix="%">99,98%</div><div class="tag">Средний аптайм</div></div>
+        </div>
+        <div class="hero-copy">
+          <p class="eyebrow"><span>▪</span>Инженерия и продукты</p>
+          <p class="lead">KINETIC LABS — техническое бюро и венчурная студия. Проектируем, строим и запускаем цифровые продукты: от первого прототипа до масштабируемой платформы с ИИ в основе.</p>
+          <div class="cta-row">
+            <button type="button" class="btn" data-open-modal>Запустить проект <svg class="ic"><use href="#i-arrow"/></svg></button>
+            <a class="btn btn-ghost" href="#programs">Направления <svg class="ic"><use href="#i-down"/></svg></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Правая колонка: интерактивный технический блок -->
+      <div class="lg:col-span-7 tech mk mk-v" id="tech" aria-roledescription="слайдер">
+        <div class="tech-bar">
+          <span><b>FIG</b><span id="figName">01 — Тесеракт</span></span>
+          <span class="hide-xs" id="hud" aria-hidden="true">X 0.500 · Y 0.500</span>
+        </div>
+        <div class="tech-stage" id="techStage">
+          <canvas id="techCanvas" role="img" aria-label="Интерактивная 4D-проекция: тесеракт"></canvas>
+          <i class="reg tl"></i><i class="reg tr"></i><i class="reg bl"></i><i class="reg br"></i>
+          <span class="stage-tag">Интерактив ▸ двигайте курсором</span>
+        </div>
+        <div class="tech-ctl">
+          <span class="prog"><i id="slideProg"></i></span>
+          <button type="button" class="sq-btn" id="prevSlide" aria-label="Предыдущий слайд"><span aria-hidden="true">&lt;</span></button>
+          <button type="button" class="sq-btn" id="nextSlide" aria-label="Следующий слайд"><span aria-hidden="true">&gt;</span></button>
+          <div class="ctl-info" aria-live="polite">
+            <div class="ctl-title" id="slideTitle">Тесеракт</div>
+            <div class="tag" id="slideCap">4D-гиперкуб · вращение XW / ZW</div>
+          </div>
+          <div class="ctl-count" id="slideCount">01<span>/03</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     PARTNERS
+     ========================================================= -->
+<section id="partners" aria-label="Партнёры и технологии">
+  <div class="shell">
+    <div class="strip-head"><span class="tag">[ 01 ] Партнёры и технологии</span><span class="tag hide-xs">Доверяют с 2019</span></div>
+    <div class="gl grid-cols-2 lg:grid-cols-4 rv">
+      <div class="partner"><span class="tag">P/01</span>
+        <svg viewBox="0 0 220 48" role="img" aria-label="Логотип Voltra"><path d="M24 4l17 10v20L24 44 7 34V14z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M26 12l-8 13h6l-2 11 9-14h-6z" fill="currentColor"/><text x="54" y="31" font-family="Unbounded,sans-serif" font-weight="700" font-size="20" fill="currentColor" textLength="118" lengthAdjust="spacingAndGlyphs">VOLTRA</text></svg></div>
+      <div class="partner"><span class="tag">P/02</span>
+        <svg viewBox="0 0 220 48" role="img" aria-label="Логотип Orbital"><circle cx="24" cy="24" r="15" fill="none" stroke="currentColor" stroke-width="2.5"/><ellipse cx="24" cy="24" rx="22" ry="7.5" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(-30 24 24)"/><circle cx="24" cy="24" r="5" fill="currentColor"/><text x="54" y="31" font-family="Unbounded,sans-serif" font-weight="700" font-size="20" fill="currentColor" textLength="134" lengthAdjust="spacingAndGlyphs">ORBITAL</text></svg></div>
+      <div class="partner"><span class="tag">P/03</span>
+        <svg viewBox="0 0 220 48" role="img" aria-label="Логотип Quanta"><rect x="6" y="6" width="16" height="16" fill="currentColor"/><rect x="27" y="6" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"/><rect x="7" y="27" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"/><rect x="26" y="26" width="16" height="16" fill="currentColor"/><text x="54" y="31" font-family="Unbounded,sans-serif" font-weight="700" font-size="20" fill="currentColor" textLength="122" lengthAdjust="spacingAndGlyphs">QUANTA</text></svg></div>
+      <div class="partner"><span class="tag">P/04</span>
+        <svg viewBox="0 0 220 48" role="img" aria-label="Логотип Meridian"><rect x="5" y="5" width="38" height="38" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M11 37V11l13 15 13-15v26" fill="none" stroke="currentColor" stroke-width="3.5"/><text x="54" y="31" font-family="Unbounded,sans-serif" font-weight="700" font-size="20" fill="currentColor" textLength="150" lengthAdjust="spacingAndGlyphs">MERIDIAN</text></svg></div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>TypeScript</span><span>Rust</span><span>Go</span><span>PostgreSQL</span><span>Kubernetes</span><span>PyTorch</span><span>LangChain</span><span>Kafka</span><span>ClickHouse</span><span>Terraform</span><span>WebGPU</span><span>Next.js</span>
+    <span>TypeScript</span><span>Rust</span><span>Go</span><span>PostgreSQL</span><span>Kubernetes</span><span>PyTorch</span><span>LangChain</span><span>Kafka</span><span>ClickHouse</span><span>Terraform</span><span>WebGPU</span><span>Next.js</span>
+  </div>
+</div>
+
+<!-- =========================================================
+     PROGRAMS / BENTO
+     ========================================================= -->
+<section id="programs">
+  <div class="shell">
+    <div class="gl sec-head grid-cols-1 lg:grid-cols-12 bb">
+      <div class="lg:col-span-4 sh-l"><span class="tag">[ 02 ] Направления</span><span class="tag">// Services</span></div>
+      <div class="lg:col-span-8 sh-r">
+        <h2 class="h2">Четыре вектора инженерии</h2>
+        <p>Работаем как продуктовая команда внутри вашей компании — или запускаем проект вместе с вами как соучредители.</p>
+      </div>
+    </div>
+
+    <div class="gl grid-cols-1 md:grid-cols-2 lg:grid-cols-12 rv">
+      <article class="bento lg:col-span-7" tabindex="0">
+        <div class="bento-top"><span class="bento-n">01 /</span>
+          <button type="button" class="btn btn-sq" data-open-modal data-topic="Продуктовая инженерия" aria-label="Обсудить направление: продуктовая инженерия"><svg class="ic"><use href="#i-arrow"/></svg></button></div>
+        <div class="bento-mid">
+          <svg class="bento-ic" viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="6" y="6" width="64" height="64"/><rect x="22" y="18" width="64" height="48"/><rect x="38" y="30" width="64" height="32"/><rect x="100" y="28" width="12" height="12" fill="#ff4d00" stroke="none"/></svg>
+        </div>
+        <div>
+          <h3>Продуктовая инженерия</h3>
+          <p>Полный цикл: исследование, дизайн, разработка и вывод в продакшен. Web-платформы, мобильные приложения и API.</p>
+          <ul class="chips"><li>Web</li><li>Mobile</li><li>API</li><li>Design</li></ul>
+        </div>
+      </article>
+
+      <article class="bento lg:col-span-5" tabindex="0">
+        <div class="bento-top"><span class="bento-n">02 /</span>
+          <button type="button" class="btn btn-sq" data-open-modal data-topic="AI &amp; Data" aria-label="Обсудить направление: AI и данные"><svg class="ic"><use href="#i-arrow"/></svg></button></div>
+        <div class="bento-mid">
+          <svg class="bento-ic" viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M22 38L54 18M22 42L54 62M66 18L98 38M66 62L98 42M60 24v32"/><circle cx="18" cy="40" r="7" fill="none"/><circle cx="60" cy="14" r="7"/><circle cx="60" cy="66" r="7"/><circle cx="102" cy="40" r="8" fill="#ff4d00" stroke="none"/></svg>
+        </div>
+        <div>
+          <h3>AI &amp; Data</h3>
+          <p>Внедряем LLM, RAG-системы и ML-пайплайны в рабочие процессы. Измеримый эффект, а не демо ради демо.</p>
+          <ul class="chips"><li>LLM</li><li>RAG</li><li>MLOps</li></ul>
+        </div>
+      </article>
+
+      <article class="bento lg:col-span-5" tabindex="0">
+        <div class="bento-top"><span class="bento-n">03 /</span>
+          <button type="button" class="btn btn-sq" data-open-modal data-topic="Венчурное партнёрство" aria-label="Обсудить направление: венчурная студия"><svg class="ic"><use href="#i-arrow"/></svg></button></div>
+        <div class="bento-mid">
+          <svg class="bento-ic" viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="8" y="52" width="16" height="20"/><rect x="32" y="40" width="16" height="32"/><rect x="56" y="28" width="16" height="44"/><rect x="80" y="12" width="16" height="60" fill="#ff4d00" stroke="none"/><path d="M4 74h112"/></svg>
+        </div>
+        <div>
+          <h3>Венчурная студия</h3>
+          <p>Запускаем стартапы вместе: капитал, команда и инфраструктура в обмен на долю. Идея — от вас, остальное — от нас.</p>
+          <ul class="chips"><li>Капитал</li><li>Команда</li><li>Доля</li></ul>
+        </div>
+      </article>
+
+      <article class="bento lg:col-span-7" tabindex="0">
+        <div class="bento-top"><span class="bento-n">04 /</span>
+          <button type="button" class="btn btn-sq" data-open-modal data-topic="Инфраструктура и безопасность" aria-label="Обсудить направление: инфраструктура и безопасность"><svg class="ic"><use href="#i-arrow"/></svg></button></div>
+        <div class="bento-mid">
+          <svg class="bento-ic" viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="6" y="8" width="20" height="20"/><rect x="34" y="8" width="20" height="20"/><rect x="62" y="8" width="20" height="20"/><rect x="90" y="8" width="20" height="20"/><rect x="6" y="34" width="20" height="20"/><rect x="34" y="34" width="20" height="20" fill="currentColor"/><rect x="62" y="34" width="20" height="20"/><rect x="90" y="34" width="20" height="20"/><rect x="6" y="60" width="20" height="14"/><rect x="34" y="60" width="20" height="14"/><rect x="62" y="60" width="20" height="14" fill="#ff4d00" stroke="none"/><rect x="90" y="60" width="20" height="14"/></svg>
+        </div>
+        <div>
+          <h3>Инфраструктура и безопасность</h3>
+          <p>Облака, DevOps и аудит безопасности. Отказоустойчивость 99,9%, наблюдаемость и контроль рисков на каждом этапе.</p>
+          <ul class="chips"><li>Cloud</li><li>SRE</li><li>Security</li><li>Audit</li></ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     CALCULATOR
+     ========================================================= -->
+<section id="calc">
+  <div class="shell">
+    <div class="gl sec-head grid-cols-1 lg:grid-cols-12 bb">
+      <div class="lg:col-span-4 sh-l"><span class="tag">[ 03 ] Оценка проекта</span><span class="tag">// Estimator v2.6</span></div>
+      <div class="lg:col-span-8 sh-r">
+        <h2 class="h2">Калькулятор бюджета</h2>
+        <p>Выберите тип продукта, срок и модули — терминал мгновенно пересчитает бюджет и состав команды.</p>
+      </div>
+    </div>
+
+    <div class="gl grid-cols-1 lg:grid-cols-12 rv">
+      <div class="lg:col-span-7 calc-ctl">
+        <fieldset class="fs">
+          <legend><b>01</b> Тип продукта</legend>
+          <div class="gl boxed grid-cols-1 sm:grid-cols-3">
+            <label class="opt"><input type="radio" name="ptype" value="mvp" checked><span class="opt-body"><span class="opt-head"><span class="opt-t">MVP</span><i class="opt-mark"></i></span><span class="opt-d">Рабочий прототип для проверки гипотезы</span><span class="opt-p">от 1 800 000&nbsp;₽</span></span></label>
+            <label class="opt"><input type="radio" name="ptype" value="web"><span class="opt-body"><span class="opt-head"><span class="opt-t">Web-платформа</span><i class="opt-mark"></i></span><span class="opt-d">Масштабируемый продукт с личными кабинетами</span><span class="opt-p">от 3 600 000&nbsp;₽</span></span></label>
+            <label class="opt"><input type="radio" name="ptype" value="ai"><span class="opt-body"><span class="opt-head"><span class="opt-t">AI-интеграция</span><i class="opt-mark"></i></span><span class="opt-d">LLM / RAG / ML-пайплайны в ваших процессах</span><span class="opt-p">от 5 200 000&nbsp;₽</span></span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="fs">
+          <legend><b>02</b> Сроки</legend>
+          <div class="gl boxed grid-cols-1 sm:grid-cols-3">
+            <label class="opt"><input type="radio" name="speed" value="std" checked><span class="opt-body"><span class="opt-head"><span class="opt-t">Стандарт</span><i class="opt-mark"></i></span><span class="opt-d">Оптимальный темп, без наценки</span><span class="opt-p"><span data-weeks="std">8</span> нед. · ×1.00</span></span></label>
+            <label class="opt"><input type="radio" name="speed" value="fast"><span class="opt-body"><span class="opt-head"><span class="opt-t">Ускоренный</span><i class="opt-mark"></i></span><span class="opt-d">Расширенная команда, параллельные потоки</span><span class="opt-p"><span data-weeks="fast">6</span> нед. · ×1.25</span></span></label>
+            <label class="opt"><input type="radio" name="speed" value="rush"><span class="opt-body"><span class="opt-head"><span class="opt-t">Экспресс</span><i class="opt-mark"></i></span><span class="opt-d">Максимальный приоритет, выделенный штаб</span><span class="opt-p"><span data-weeks="rush">4</span> нед. · ×1.60</span></span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="fs">
+          <legend><b>03</b> Дополнительные модули</legend>
+          <div class="gl boxed grid-cols-1 sm:grid-cols-2">
+            <label class="opt opt-row"><input type="checkbox" name="mod" value="design"><span class="opt-body"><span class="opt-lbl"><i class="opt-mark"></i><span class="opt-t">Дизайн-система</span></span><span class="opt-p">+320 000&nbsp;₽</span></span></label>
+            <label class="opt opt-row"><input type="checkbox" name="mod" value="api"><span class="opt-body"><span class="opt-lbl"><i class="opt-mark"></i><span class="opt-t">Интеграции API</span></span><span class="opt-p">+280 000&nbsp;₽</span></span></label>
+            <label class="opt opt-row"><input type="checkbox" name="mod" value="sec"><span class="opt-body"><span class="opt-lbl"><i class="opt-mark"></i><span class="opt-t">Аудит безопасности</span></span><span class="opt-p">+350 000&nbsp;₽</span></span></label>
+            <label class="opt opt-row"><input type="checkbox" name="mod" value="support"><span class="opt-body"><span class="opt-lbl"><i class="opt-mark"></i><span class="opt-t">Поддержка 6 мес.</span></span><span class="opt-p">+480 000&nbsp;₽</span></span></label>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- Терминал -->
+      <div class="lg:col-span-5 term mk mk-v" role="region" aria-label="Результат расчёта">
+        <div class="term-bar"><span><b>■</b> kinetic_estimator.exe</span><span>sess <span id="sess">0x3F9A</span></span></div>
+        <div class="term-body">
+          <p class="term-cmd">estimate --run</p>
+          <div class="tl"><span>Продукт</span><i></i><b id="t-prod">—</b></div>
+          <div class="tl"><span>Срок</span><i></i><b id="t-time">—</b></div>
+          <div class="tl"><span>Команда</span><i></i><b id="t-team">—</b></div>
+          <div class="tl"><span>Модули</span><i></i><b id="t-mods">—</b></div>
+          <hr class="tl-sep">
+          <div class="tl"><span>База</span><i></i><b id="t-base">—</b></div>
+          <div class="tl"><span id="t-rush-l">Срочность</span><i></i><b class="acc" id="t-rush">—</b></div>
+          <div class="tl"><span>Модули</span><i></i><b id="t-modsum">—</b></div>
+          <div class="term-total">
+            <span class="tag" style="color:#a1a1aa">Итого / оценка бюджета</span>
+            <div class="total-n" id="t-total">0&nbsp;₽</div>
+            <div class="range" id="t-range">Вилка ±12%</div>
+            <div class="seg" aria-hidden="true"><i id="seg-base" style="background:#fff;width:100%"></i><i id="seg-rush" style="background:#ff4d00;width:0"></i><i id="seg-mod" style="background:#71717a;width:0"></i></div>
+            <div class="legend" aria-hidden="true"><span style="--c:#fff">База</span><span style="--c:#ff4d00">Срочность</span><span style="--c:#71717a">Модули</span></div>
+          </div>
+        </div>
+        <div class="term-foot">
+          <div class="term-status"><span id="t-status-txt">Готово</span><span class="caret"></span></div>
+          <button type="button" class="btn" data-open-modal data-context="calc">Запросить предложение <svg class="ic"><use href="#i-arrow"/></svg></button>
+          <p class="note">* Предварительная оценка. Точный бюджет и план — после брифинга и анализа требований.</p>
+        </div>
+      </div>
+    </div>
+    <p class="sr-only" id="calcSr" aria-live="polite"></p>
+  </div>
+</section>
+
+<!-- =========================================================
+     PROJECTS
+     ========================================================= -->
+<section id="projects">
+  <div class="shell">
+    <div class="gl sec-head grid-cols-1 lg:grid-cols-12 bb">
+      <div class="lg:col-span-4 sh-l"><span class="tag">[ 04 ] Проекты</span><span class="tag">// Selected work</span></div>
+      <div class="lg:col-span-8 sh-r">
+        <h2 class="h2">Запущено в продакшен</h2>
+        <p>Несколько проектов из портфолио бюро и венчурной студии. Названия изменены по условиям NDA.</p>
+      </div>
+    </div>
+    <div class="rv">
+      <div class="proj-head bb tag" aria-hidden="true"><span>№</span><span>Проект</span><span>Сектор</span><span>Год</span><span>Результат</span><span></span></div>
+
+      <article class="proj" tabindex="0">
+        <span class="p-n">01</span>
+        <div class="p-main"><h3>Aurora Pay</h3><p>Платёжный шлюз для маркетплейсов: 2 000 TPS и антифрод на ML.</p></div>
+        <span class="p-sec">Fintech</span><span class="p-year">2025</span>
+        <span class="p-metric"><b>+340%</b>конверсия оплаты</span>
+        <span class="p-arrow" aria-hidden="true"><svg class="ic"><use href="#i-arrow"/></svg></span>
+      </article>
+      <article class="proj" tabindex="0">
+        <span class="p-n">02</span>
+        <div class="p-main"><h3>NeuroLedger</h3><p>LLM-ассистент для юристов: анализ договоров и поиск прецедентов.</p></div>
+        <span class="p-sec">Legaltech / AI</span><span class="p-year">2025</span>
+        <span class="p-metric"><b>−62%</b>время на разбор</span>
+        <span class="p-arrow" aria-hidden="true"><svg class="ic"><use href="#i-arrow"/></svg></span>
+      </article>
+      <article class="proj" tabindex="0">
+        <span class="p-n">03</span>
+        <div class="p-main"><h3>TerraGrid</h3><p>IoT-платформа управления распределённой энергосетью.</p></div>
+        <span class="p-sec">Energy / IoT</span><span class="p-year">2024</span>
+        <span class="p-metric"><b>12 000</b>устройств онлайн</span>
+        <span class="p-arrow" aria-hidden="true"><svg class="ic"><use href="#i-arrow"/></svg></span>
+      </article>
+      <article class="proj" tabindex="0">
+        <span class="p-n">04</span>
+        <div class="p-main"><h3>Pulse OS</h3><p>Операционная система клиник: запись, телемедицина и аналитика.</p></div>
+        <span class="p-sec">Healthtech</span><span class="p-year">2024</span>
+        <span class="p-metric"><b>1,2 млн</b>пользователей</span>
+        <span class="p-arrow" aria-hidden="true"><svg class="ic"><use href="#i-arrow"/></svg></span>
+      </article>
+      <article class="proj" tabindex="0">
+        <span class="p-n">05</span>
+        <div class="p-main"><h3>Vanta Freight</h3><p>Маршрутизация и трекинг грузов в реальном времени.</p></div>
+        <span class="p-sec">Logistics</span><span class="p-year">2023</span>
+        <span class="p-metric"><b>−28%</b>затрат на рейс</span>
+        <span class="p-arrow" aria-hidden="true"><svg class="ic"><use href="#i-arrow"/></svg></span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     STACK
+     ========================================================= -->
+<section id="stack">
+  <div class="shell">
+    <div class="gl sec-head grid-cols-1 lg:grid-cols-12 bb">
+      <div class="lg:col-span-4 sh-l"><span class="tag">[ 05 ] Стек</span><span class="tag">// Toolchain</span></div>
+      <div class="lg:col-span-8 sh-r">
+        <h2 class="h2">Инструменты, которым мы доверяем</h2>
+        <p>Выбираем зрелые технологии под задачу, а не под моду. Всё, что попадает в продакшен, проходит ревью и нагрузочные испытания.</p>
+      </div>
+    </div>
+    <div class="gl grid-cols-2 lg:grid-cols-4 rv">
+      <div class="stack-cell"><h3>Frontend <span>S/01</span></h3><ul><li>TypeScript</li><li>React / Next.js</li><li>WebGL / Three.js</li><li>Tailwind CSS</li></ul></div>
+      <div class="stack-cell"><h3>Backend <span>S/02</span></h3><ul><li>Rust</li><li>Go</li><li>Node.js</li><li>PostgreSQL</li></ul></div>
+      <div class="stack-cell"><h3>AI / ML <span>S/03</span></h3><ul><li>PyTorch</li><li>LangChain</li><li>vLLM</li><li>pgvector</li></ul></div>
+      <div class="stack-cell"><h3>Data <span>S/04</span></h3><ul><li>Kafka</li><li>ClickHouse</li><li>dbt</li><li>Airflow</li></ul></div>
+      <div class="stack-cell"><h3>Infra <span>S/05</span></h3><ul><li>Kubernetes</li><li>Terraform</li><li>AWS / GCP</li><li>Cloudflare</li></ul></div>
+      <div class="stack-cell"><h3>Security <span>S/06</span></h3><ul><li>SAST / DAST</li><li>HashiCorp Vault</li><li>Zero-trust</li><li>Pentest</li></ul></div>
+      <div class="stack-cell"><h3>Mobile <span>S/07</span></h3><ul><li>Swift</li><li>Kotlin</li><li>React Native</li><li>Flutter</li></ul></div>
+      <div class="stack-cell"><h3>Design <span>S/08</span></h3><ul><li>Figma</li><li>Design Tokens</li><li>Storybook</li><li>Motion</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     FAQ
+     ========================================================= -->
+<section id="faq">
+  <div class="shell">
+    <div class="gl grid-cols-1 lg:grid-cols-12">
+      <div class="lg:col-span-4 sh-l cell" style="padding:var(--pad)">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <span class="tag">[ 06 ] FAQ</span>
+          <h2 class="h2">Частые вопросы</h2>
+          <p style="margin:0;color:#3f3f46;max-width:36ch">Не нашли ответ? Напишите нам — ответим в течение рабочего дня.</p>
+        </div>
+        <div><button type="button" class="btn" data-open-modal data-topic="Другое">Задать вопрос <svg class="ic"><use href="#i-arrow"/></svg></button></div>
+      </div>
+      <div class="lg:col-span-8" style="padding:0">
+        <div class="faq-list">
+          <div class="faq-item open">
+            <h3 style="margin:0"><button type="button" class="faq-q" id="q1" aria-expanded="true" aria-controls="a1"><span class="faq-n">01</span><span class="faq-t">Сколько занимает запуск MVP?</span><span class="faq-i" aria-hidden="true"></span></button></h3>
+            <div class="faq-a" id="a1" role="region" aria-labelledby="q1"><div><p>В среднем 6–10 недель: неделя на исследование и архитектуру, затем двухнедельные спринты с демо. Сроки зависят от сложности — точную оценку даём после брифинга.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <h3 style="margin:0"><button type="button" class="faq-q" id="q2" aria-expanded="false" aria-controls="a2"><span class="faq-n">02</span><span class="faq-t">Работаете ли вы за долю в проекте?</span><span class="faq-i" aria-hidden="true"></span></button></h3>
+            <div class="faq-a" id="a2" role="region" aria-labelledby="q2"><div><p>Да. Как венчурная студия мы входим в избранные проекты: часть работ и инфраструктуры — в обмен на долю. Формат обсуждаем индивидуально, после оценки потенциала продукта.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <h3 style="margin:0"><button type="button" class="faq-q" id="q3" aria-expanded="false" aria-controls="a3"><span class="faq-n">03</span><span class="faq-t">Кому принадлежит код и интеллектуальная собственность?</span><span class="faq-i" aria-hidden="true"></span></button></h3>
+            <div class="faq-a" id="a3" role="region" aria-labelledby="q3"><div><p>Заказчику. Все исключительные права, репозитории и доступы к инфраструктуре передаются вам в полном объёме после оплаты этапов. Исключение — совместные венчурные проекты, где права фиксируются в соглашении.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <h3 style="margin:0"><button type="button" class="faq-q" id="q4" aria-expanded="false" aria-controls="a4"><span class="faq-n">04</span><span class="faq-t">Как устроены процесс и отчётность?</span><span class="faq-i" aria-hidden="true"></span></button></h3>
+            <div class="faq-a" id="a4" role="region" aria-labelledby="q4"><div><p>Двухнедельные спринты, демо в конце каждого, открытый доступ к трекеру задач и репозиторию. Выделенный менеджер на связи в рабочие часы, еженедельный отчёт о бюджете и рисках.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <h3 style="margin:0"><button type="button" class="faq-q" id="q5" aria-expanded="false" aria-controls="a5"><span class="faq-n">05</span><span class="faq-t">Подписываете ли вы NDA и работаете в закрытом контуре?</span><span class="faq-i" aria-hidden="true"></span></button></h3>
+            <div class="faq-a" id="a5" role="region" aria-labelledby="q5"><div><p>Подписываем NDA до первого обсуждения деталей. Умеем работать в закрытых контурах заказчика, с VPN, раздельными доступами и on-premise развёртыванием моделей.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <h3 style="margin:0"><button type="button" class="faq-q" id="q6" aria-expanded="false" aria-controls="a6"><span class="faq-n">06</span><span class="faq-t">Что с поддержкой после релиза?</span><span class="faq-i" aria-hidden="true"></span></button></h3>
+            <div class="faq-a" id="a6" role="region" aria-labelledby="q6"><div><p>90 дней гарантии на исправление дефектов входят в любой проект. Дальше — подписка на поддержку с SLA, мониторингом 24/7 и ежемесячным пакетом часов на развитие.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- =========================================================
+     CTA + FOOTER
+     ========================================================= -->
+<section class="cta on-dark" aria-labelledby="ctaTitle" style="border-bottom:1px solid #27272a">
+  <div class="cta-wrap mk mk-lg mk-v" style="position:relative">
+    <span class="tag" style="color:#a1a1aa">[ 07 ] Следующий шаг</span>
+    <h2 class="fit cta-title" id="ctaTitle" data-fit style="margin-top:clamp(16px,2.4vw,32px)">
+      <span class="fit-line">Есть идея?</span>
+      <span class="fit-line">Запустим<span class="sq"></span></span>
+    </h2>
+  </div>
+  <div class="shell" style="background:var(--ink);border-color:#27272a">
+    <div class="gl dark cta-row grid-cols-1 md:grid-cols-12" style="border-top:1px solid #27272a">
+      <div class="md:col-span-8"><p>Опишите задачу — вернёмся с оценкой, составом команды и планом запуска в течение 24 часов. Без обязательств и скрытых платежей.</p></div>
+      <div class="md:col-span-4"><button type="button" class="btn" data-open-modal>Подать заявку <svg class="ic"><use href="#i-arrow"/></svg></button></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer on-dark">
+  <div class="shell">
+    <div class="gl dark grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="f-col">
+        <a href="#top" class="logo" aria-label="KINETIC LABS — наверх" style="gap:12px;transform:none">
+          <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" fill="#ff4d00"/><path d="M9 7v18M9 16l9-9M9 16l9 9" stroke="#0a0a0a" stroke-width="3" fill="none" stroke-linecap="square"/><rect x="21" y="21" width="4" height="4" fill="#0a0a0a"/></svg>
+          <span class="logo-t">Kinetic<span>Labs</span></span>
+        </a>
+        <p>Техническое бюро и венчурная студия. Инженерия, продукты и ИИ — от идеи до масштаба.</p>
+      </div>
+      <div class="f-col">
+        <h4>Навигация</h4>
+        <a href="#programs">Программы</a><a href="#projects">Проекты</a><a href="#stack">Стек</a><a href="#faq">FAQ</a>
+      </div>
+      <div class="f-col">
+        <h4>Контакты</h4>
+        <a href="mailto:hello@kinetic-labs.io">hello@kinetic-labs.io</a>
+        <a href="tel:+74950000000">+7 (495) 000-00-00</a>
+        <p>Москва, Технологический проезд, 7</p>
+      </div>
+      <div class="f-col">
+        <h4>Сети</h4>
+        <a href="#" rel="noopener">Telegram ↗</a><a href="#" rel="noopener">GitHub ↗</a><a href="#" rel="noopener">LinkedIn ↗</a>
+      </div>
+    </div>
+    <div class="f-bottom">
+      <span>© 2026 Kinetic Labs. Все права защищены.</span>
+      <span><i class="ok-dot"></i>Все системы в норме · v2026.04</span>
+      <a href="#top">↑ Наверх</a>
+    </div>
+  </div>
+</footer>
+
+<!-- =========================================================
+     MODAL
+     ========================================================= -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-bd" data-close></div>
+  <div class="modal-panel mk" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-scroll">
+      <div class="modal-bar"><span>FORM // KL-APPLICATION-001</span><button type="button" class="modal-x" data-close aria-label="Закрыть окно">[ X ]</button></div>
+
+      <div class="modal-body" id="formView">
+        <h2 id="modalTitle">Подать заявку</h2>
+        <p class="sub">Опишите задачу в двух словах — ответим в течение 24 часов с планом следующих шагов.</p>
+        <div class="est-note" id="estNote" hidden><i></i><div><b>Расчёт приложен к заявке</b><span id="estNoteText"></span></div></div>
+        <form id="leadForm" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="f-name">Имя <i>*</i></label>
+              <input class="input" id="f-name" name="name" type="text" autocomplete="name" placeholder="Алексей Ветров" aria-describedby="f-name-err">
+              <div class="err" id="f-name-err" aria-live="polite"></div>
+            </div>
+            <div class="field">
+              <label for="f-contact">Контакт <i>*</i></label>
+              <input class="input" id="f-contact" name="contact" type="text" autocomplete="email" placeholder="email, @telegram или телефон" aria-describedby="f-contact-err">
+              <div class="err" id="f-contact-err" aria-live="polite"></div>
+            </div>
+            <div class="field">
+              <label for="f-topic">Направление</label>
+              <select class="input" id="f-topic" name="topic">
+                <option value="Продуктовая инженерия">Продуктовая инженерия</option>
+                <option value="AI &amp; Data">AI &amp; Data</option>
+                <option value="Венчурное партнёрство">Венчурное партнёрство</option>
+                <option value="Инфраструктура и безопасность">Инфраструктура и безопасность</option>
+                <option value="Другое">Другое</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-budget">Бюджет</label>
+              <select class="input" id="f-budget" name="budget">
+                <option value="Не определён">Не определён</option>
+                <option value="до 2 млн ₽">до 2 млн ₽</option>
+                <option value="2–5 млн ₽">2–5 млн ₽</option>
+                <option value="5–10 млн ₽">5–10 млн ₽</option>
+                <option value="10+ млн ₽">10+ млн ₽</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="f-msg">Задача</label>
+              <textarea class="input" id="f-msg" name="msg" rows="3" placeholder="Что хотите построить и к какому сроку?"></textarea>
+            </div>
+            <div class="field full">
+              <label class="agree"><input type="checkbox" id="f-agree" aria-describedby="f-agree-err"><span>Согласен на обработку персональных данных и получение ответа по указанному контакту.</span></label>
+              <div class="err" id="f-agree-err" aria-live="polite"></div>
+            </div>
+            <div class="full"><button type="submit" class="btn" id="submitBtn" style="width:100%"><span>Отправить заявку</span> <svg class="ic"><use href="#i-arrow"/></svg></button></div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-body" id="doneView" hidden>
+        <div class="done-ic"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M5 15l6 6L23 8"/></svg></div>
+        <h2 id="doneTitle" tabindex="-1">Заявка принята</h2>
+        <div class="ticket">TICKET <span id="d-id">KL-00000</span></div>
+        <dl class="dl">
+          <div><dt>Имя</dt><dd id="d-name"></dd></div>
+          <div><dt>Контакт</dt><dd id="d-contact"></dd></div>
+          <div><dt>Направление</dt><dd id="d-topic"></dd></div>
+          <div id="d-est-row" hidden><dt>Расчёт</dt><dd id="d-est"></dd></div>
+        </dl>
+        <ul class="log" aria-label="Журнал отправки">
+          <li>Пакет данных сформирован — <b>OK</b></li>
+          <li>Шифрование канала — <b>OK</b></li>
+          <li>Заявка поставлена в очередь — <b>OK</b></li>
+          <li>Ответ менеджера — <b>≤ 24 часов</b></li>
+        </ul>
+        <button type="button" class="btn" data-close style="width:100%">Закрыть <svg class="ic"><use href="#i-arrow"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden><i></i><div><b>Уведомление</b><span id="toastText"></span></div></div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const nf = new Intl.NumberFormat('ru-RU');
+const rub = n => nf.format(Math.round(n)) + '\u00A0₽';
+
+/* заглушки для пустых ссылок */
+$$('a[href="#"]').forEach(a => a.addEventListener('click', e => e.preventDefault()));
+
+/* =========================================================
+   MOBILE MENU
+   ========================================================= */
+const burger = $('#burger'), mm = $('#mobileMenu');
+function setMenu(open) {
+  burger.setAttribute('aria-expanded', String(open));
+  burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+  burger.classList.toggle('open', open);
+  mm.hidden = !open;
+}
+burger.addEventListener('click', () => setMenu(burger.getAttribute('aria-expanded') !== 'true'));
+$$('a, button', mm).forEach(el => el.addEventListener('click', () => setMenu(false)));
+matchMedia('(min-width:1024px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
+
+/* =========================================================
+   SCROLLSPY  [ Программы ]
+   ========================================================= */
+const spySecs = ['programs', 'projects', 'stack', 'faq'].map(id => document.getElementById(id));
+const navLinks = $$('.nav-link');
+function spy() {
+  let cur = 'programs';
+  const y = innerHeight * 0.4;
+  spySecs.forEach(s => { if (s.getBoundingClientRect().top <= y) cur = s.id; });
+  navLinks.forEach(a => {
+    const on = a.dataset.spy === cur;
+    a.classList.toggle('active', on);
+    if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+  });
+}
+addEventListener('scroll', spy, { passive: true });
+spy();
+
+/* =========================================================
+   CLOCK
+   ========================================================= */
+const clock = $('#clock');
+const tick = () => { clock.textContent = new Date().toISOString().slice(11, 19); };
+tick(); setInterval(tick, 1000);
+
+/* =========================================================
+   FIT TEXT — заголовок на всю ширину
+   ========================================================= */
+const fitEls = $$('[data-fit]');
+function fit() {
+  fitEls.forEach(el => {
+    el.style.fontSize = '100px';
+    let m = 0;
+    $$('.fit-line', el).forEach(l => { m = Math.max(m, l.getBoundingClientRect().width); });
+    const avail = el.clientWidth;
+    if (m > 0 && avail > 0) el.style.fontSize = (100 * avail / m * 0.994).toFixed(2) + 'px';
+  });
+}
+fit();
+if (document.fonts) {
+  document.fonts.load('800 100px Unbounded').then(fit).catch(() => {});
+  document.fonts.ready.then(fit);
+}
+addEventListener('load', fit);
+let fitT; addEventListener('resize', () => { clearTimeout(fitT); fitT = setTimeout(fit, 60); });
+
+/* =========================================================
+   REVEAL + COUNTERS
+   ========================================================= */
+function countUp(el) {
+  const end = parseFloat(el.dataset.count), dec = +el.dataset.dec || 0, suf = el.dataset.suffix || '';
+  const fmtN = v => v.toFixed(dec).replace('.', ',') + suf;
+  if (reduced) { el.textContent = fmtN(end); return; }
+  const t0 = performance.now(), dur = 1500;
+  (function step(now) {
+    const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmtN(end * e);
+    if (p < 1) requestAnimationFrame(step);
+  })(t0);
+}
+const counters = $$('[data-count]');
+if (!reduced) counters.forEach(c => { c.textContent = '0'; });
+const io = new IntersectionObserver(entries => entries.forEach(e => {
+  if (!e.isIntersecting) return;
+  e.target.classList.add('in');
+  if (e.target.hasAttribute('data-count')) countUp(e.target);
+  io.unobserve(e.target);
+}), { threshold: 0.12, rootMargin: '0px 0px -4% 0px' });
+$$('.rv').forEach(el => reduced ? el.classList.add('in') : io.observe(el));
+counters.forEach(c => io.observe(c));
+
+/* =========================================================
+   TECH CANVAS — 3 слайда
+   ========================================================= */
+const stage = $('#techStage'), cv = $('#techCanvas'), ctx = cv.getContext('2d');
+const INK = '#0a0a0a', ACC = '#ff4d00';
+let W = 0, H = 0, tAcc = reduced ? 1.7 : 0;
+const ptr = { x: .5, y: .5, tx: .5, ty: .5, inside: false };
+
+function resize() {
+  const r = cv.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = r.width; H = r.height;
+  cv.width = Math.max(1, Math.round(W * dpr));
+  cv.height = Math.max(1, Math.round(H * dpr));
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+/* --- 1. Тесеракт --- */
+const T_V = [];
+for (let i = 0; i < 16; i++) T_V.push([i & 1 ? 1 : -1, i & 2 ? 1 : -1, i & 4 ? 1 : -1, i & 8 ? 1 : -1]);
+const T_E = [];
+for (let i = 0; i < 16; i++) for (let b = 0; b < 4; b++) { const j = i ^ (1 << b); if (j > i) T_E.push([i, j, b]); }
+
+function drawTess(t) {
+  const cx = W / 2, cy = H / 2, sc = Math.min(W, H) * 0.34;
+  const a1 = t * .55, a2 = t * .37;
+  const ay = t * .16 + (ptr.x - .5) * 2.6, ax = (ptr.y - .5) * 1.9 + .35;
+  const c1 = Math.cos(a1), s1 = Math.sin(a1), c2 = Math.cos(a2), s2 = Math.sin(a2);
+  const cY = Math.cos(ay), sY = Math.sin(ay), cX = Math.cos(ax), sX = Math.sin(ax);
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(10,10,10,.18)'; ctx.setLineDash([2, 5]); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, sc * 1.12, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - sc * 1.3, cy); ctx.lineTo(cx + sc * 1.3, cy); ctx.moveTo(cx, cy - sc * 1.3); ctx.lineTo(cx, cy + sc * 1.3); ctx.stroke();
+  ctx.restore();
+
+  const P = T_V.map(v => {
+    const x = v[0], y = v[1], z = v[2], w = v[3];
+    const x1 = x * c1 - w * s1, w1 = x * s1 + w * c1;
+    const z1 = z * c2 - w1 * s2, w2 = z * s2 + w1 * c2;
+    const k = 1.9 / (3.4 - w2);
+    const X = x1 * k, Y = y * k, Z = z1 * k;
+    const X2 = X * cY + Z * sY, Z2 = -X * sY + Z * cY;
+    const Y2 = Y * cX - Z2 * sX, Z3 = Y * sX + Z2 * cX;
+    const p = 4 / (6 - Z3);
+    return { x: cx + X2 * p * sc, y: cy + Y2 * p * sc, z: Z3, w: w2 };
+  });
+
+  ctx.lineWidth = 1.3;
+  T_E.forEach(e => {
+    const A = P[e[0]], B = P[e[1]];
+    const d = Math.max(0, Math.min(1, ((A.z + B.z) / 2 + 1.4) / 2.8));
+    ctx.globalAlpha = .3 + .7 * d;
+    ctx.strokeStyle = e[2] === 3 ? ACC : INK;
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();
+  });
+  P.forEach(p => {
+    const d = Math.max(0, Math.min(1, (p.z + 1.4) / 2.8));
+    const s = 3 + 4 * d;
+    ctx.globalAlpha = .55 + .45 * d;
+    ctx.fillStyle = p.w > 0 ? ACC : INK;
+    ctx.fillRect(p.x - s / 2, p.y - s / 2, s, s);
+  });
+  ctx.globalAlpha = 1;
+  ctx.font = '500 10px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(10,10,10,.55)'; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic';
+  const deg = v => String(Math.round(((v % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2) * 57.2958)).padStart(3, '0');
+  ctx.fillText('XW ' + deg(a1) + '°  ZW ' + deg(a2) + '°', W - 32, H - 18);
+}
+
+/* --- 2. Матрица --- */
+function drawMatrix(t) {
+  const step = Math.max(18, Math.round(Math.min(W, H) / 17));
+  const cols = Math.floor(W / step), rows = Math.floor(H / step);
+  const ox = (W - cols * step) / 2 + step / 2, oy = (H - rows * step) / 2 + step / 2;
+  const px = ptr.x * W, py = ptr.y * H;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const x = ox + c * step, y = oy + r * step;
+      const d = Math.hypot(x - px, y - py);
+      const wave = Math.sin(x * .012 + t * 1.2) * Math.cos(y * .014 - t * .9);
+      const base = .5 + .5 * wave;
+      const ripple = Math.exp(-d / 230) * (.5 + .5 * Math.sin(d * .045 - t * 4));
+      const v = Math.max(0, Math.min(1, base * .5 + ripple * .95));
+      const s = 1.5 + v * step * .6;
+      ctx.fillStyle = v > .8 ? ACC : INK;
+      ctx.globalAlpha = v > .8 ? 1 : .14 + v * .75;
+      ctx.fillRect(x - s / 2, y - s / 2, s, s);
+    }
+  }
+  ctx.globalAlpha = 1;
+  const sx = (t * 90) % (W + 40) - 20;
+  ctx.fillStyle = 'rgba(255,77,0,.5)'; ctx.fillRect(sx, 0, 2, H);
+  ctx.font = '500 10px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(10,10,10,.55)'; ctx.textAlign = 'right';
+  ctx.fillText(cols + '×' + rows + ' · ' + (cols * rows) + ' ячеек', W - 32, H - 18);
+}
+
+/* --- 3. Схема архитектуры --- */
+const NODES = [
+  { id: 'UI', c: 0, r: 0 }, { id: 'API', c: 1, r: 0 }, { id: 'AUTH', c: 2, r: 0 },
+  { id: 'EDGE', c: 0, r: 1 }, { id: 'CORE', c: 1, r: 1, hot: true }, { id: 'ML', c: 2, r: 1 },
+  { id: 'CDN', c: 0, r: 2 }, { id: 'DB', c: 1, r: 2 }, { id: 'QUEUE', c: 2, r: 2 }
+];
+const LINKS = [[0, 1], [1, 2], [0, 3], [1, 4], [2, 5], [3, 4], [4, 5], [3, 6], [4, 7], [6, 7], [7, 8], [5, 8]];
+
+function drawGraph(t) {
+  const nw = Math.max(64, Math.min(132, W * .19)), nh = Math.max(34, Math.min(50, H * .11));
+  const mx = nw / 2 + 24, my = nh / 2 + 34;
+  const pos = NODES.map(n => ({ x: mx + (W - 2 * mx) * n.c / 2, y: my + (H - 2 * my) * n.r / 2 }));
+  const hx = ptr.inside ? ptr.tx * W : -999, hy = ptr.inside ? ptr.ty * H : -999;
+  const hov = pos.findIndex(p => Math.abs(hx - p.x) < nw / 2 && Math.abs(hy - p.y) < nh / 2);
+
+  LINKS.forEach((l, i) => {
+    const A = pos[l[0]], B = pos[l[1]];
+    const on = hov === l[0] || hov === l[1];
+    ctx.strokeStyle = on ? ACC : 'rgba(10,10,10,.5)';
+    ctx.lineWidth = on ? 2 : 1;
+    ctx.setLineDash(on ? [] : [4, 4]);
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();
+    ctx.setLineDash([]);
+    for (let k = 0; k < 2; k++) {
+      let u = (t * .2 + i * .173 + k * .5) % 1;
+      if (i % 2) u = 1 - u;
+      const x = A.x + (B.x - A.x) * u, y = A.y + (B.y - A.y) * u;
+      ctx.fillStyle = ACC; ctx.fillRect(x - 3.5, y - 3.5, 7, 7);
+    }
+  });
+
+  const fs = Math.max(10, Math.min(12, nw / 8));
+  ctx.font = '700 ' + fs + 'px "JetBrains Mono", monospace';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  NODES.forEach((n, i) => {
+    const p = pos[i], x = p.x - nw / 2, y = p.y - nh / 2;
+    const isH = hov === i;
+    ctx.fillStyle = isH ? INK : (n.hot ? ACC : '#fff');
+    ctx.fillRect(x, y, nw, nh);
+    ctx.strokeStyle = INK; ctx.lineWidth = 1;
+    ctx.strokeRect(x + .5, y + .5, nw - 1, nh - 1);
+    if (!n.hot && !isH) { ctx.fillStyle = ACC; ctx.fillRect(x - 2, y - 2, 5, 5); }
+    ctx.fillStyle = isH ? '#fff' : INK;
+    ctx.fillText(n.id, p.x, p.y + 1);
+  });
+  ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'right';
+  ctx.font = '500 10px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(10,10,10,.55)';
+  ctx.fillText(hov >= 0 ? 'УЗЕЛ: ' + NODES[hov].id : 'НАВЕДИТЕ НА УЗЕЛ', W - 32, H - 18);
+}
+
+const SLIDES = [
+  { fig: '01 — Тесеракт', title: 'Тесеракт', cap: '4D-гиперкуб · вращение XW / ZW', label: 'Интерактивная 4D-проекция: тесеракт', draw: drawTess },
+  { fig: '02 — Матрица', title: 'Матрица данных', cap: 'Поле 2D · волны от курсора', label: 'Интерактивная матрица точек с волнами от курсора', draw: drawMatrix },
+  { fig: '03 — Архитектура', title: 'Схема архитектуры', cap: '9 узлов · пакеты в реальном времени', label: 'Интерактивная схема архитектуры из девяти узлов', draw: drawGraph }
+];
+let slide = 0, elapsed = 0;
+const DUR = 9;
+const ui = { fig: $('#figName'), title: $('#slideTitle'), cap: $('#slideCap'), count: $('#slideCount'), prog: $('#slideProg'), hud: $('#hud') };
+
+function render() { ctx.clearRect(0, 0, W, H); SLIDES[slide].draw(tAcc); }
+function updateUI(animate) {
+  const s = SLIDES[slide];
+  ui.fig.textContent = s.fig; ui.title.textContent = s.title; ui.cap.textContent = s.cap;
+  ui.count.innerHTML = String(slide + 1).padStart(2, '0') + '<span>/' + String(SLIDES.length).padStart(2, '0') + '</span>';
+  cv.setAttribute('aria-label', s.label);
+  if (animate && !reduced) { cv.classList.remove('wipe'); void cv.offsetWidth; cv.classList.add('wipe'); }
+}
+function go(dir) {
+  slide = (slide + dir + SLIDES.length) % SLIDES.length;
+  elapsed = 0; ui.prog.style.transform = 'scaleX(0)';
+  updateUI(true); render();
+}
+$('#prevSlide').addEventListener('click', () => go(-1));
+$('#nextSlide').addEventListener('click', () => go(1));
+$('#tech').addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') { go(-1); } else if (e.key === 'ArrowRight') { go(1); }
+});
+
+stage.addEventListener('pointermove', e => {
+  const r = stage.getBoundingClientRect();
+  ptr.tx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+  ptr.ty = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+  ptr.inside = true;
+  if (reduced) { ptr.x = ptr.tx; ptr.y = ptr.ty; render(); }
+});
+stage.addEventListener('pointerleave', () => {
+  ptr.inside = false; ptr.tx = .5; ptr.ty = .5;
+  if (reduced) { ptr.x = .5; ptr.y = .5; render(); }
+});
+
+let running = false, visible = false, raf = 0, last = 0, fc = 0;
+function frame(ts) {
+  if (!running) return;
+  const dt = Math.min(.05, (ts - last) / 1000); last = ts;
+  tAcc += dt;
+  ptr.x += (ptr.tx - ptr.x) * .09; ptr.y += (ptr.ty - ptr.y) * .09;
+  if (!ptr.inside) elapsed += dt;
+  if (elapsed >= DUR) go(1);
+  ui.prog.style.transform = 'scaleX(' + (elapsed / DUR).toFixed(4) + ')';
+  render();
+  if ((fc++ & 3) === 0 && ui.hud) ui.hud.textContent = 'X ' + ptr.x.toFixed(3) + ' · Y ' + ptr.y.toFixed(3);
+  raf = requestAnimationFrame(frame);
+}
+function start() { if (running || reduced || !visible || document.hidden) return; running = true; last = performance.now(); raf = requestAnimationFrame(frame); }
+function stop() { running = false; cancelAnimationFrame(raf); }
+new IntersectionObserver(es => { visible = es[0].isIntersecting; visible ? start() : stop(); }).observe(stage);
+document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+new ResizeObserver(() => { resize(); render(); }).observe(cv);
+resize(); updateUI(false); render();
+
+/* =========================================================
+   CALCULATOR
+   ========================================================= */
+const PRODUCTS = {
+  mvp: { name: 'MVP', base: 1800000, weeks: 8 },
+  web: { name: 'Web-платформа', base: 3600000, weeks: 14 },
+  ai:  { name: 'AI-интеграция', base: 5200000, weeks: 16 }
+};
+const SPEEDS = {
+  std:  { name: 'Стандарт', k: 1, w: 1 },
+  fast: { name: 'Ускоренный', k: 1.25, w: .7 },
+  rush: { name: 'Экспресс', k: 1.6, w: .5 }
+};
+const MODS = {
+  design:  { name: 'Дизайн-система', price: 320000 },
+  api:     { name: 'Интеграции API', price: 280000 },
+  sec:     { name: 'Аудит безопасности', price: 350000 },
+  support: { name: 'Поддержка 6 мес.', price: 480000 }
+};
+let lastEstimate = null, shown = 0, tw = 0, stT = 0, srT = 0;
+
+const val = n => { const el = $('input[name="' + n + '"]:checked'); return el ? el.value : null; };
+function setT(id, text) {
+  const el = document.getElementById(id);
+  if (!el || el.textContent === text) return;
+  el.textContent = text;
+  if (!reduced) { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+}
+function tweenTotal(to) {
+  cancelAnimationFrame(tw);
+  const el = $('#t-total'), from = shown;
+  if (reduced) { shown = to; el.textContent = rub(to); return; }
+  const t0 = performance.now(), dur = 520;
+  (function step(now) {
+    const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+    shown = from + (to - from) * e;
+    el.textContent = rub(shown);
+    if (p < 1) tw = requestAnimationFrame(step);
+  })(t0);
+}
+function calc(initial) {
+  const pk = val('ptype'), sk = val('speed');
+  const p = PRODUCTS[pk], s = SPEEDS[sk];
+  const mods = $$('input[name="mod"]:checked').map(i => MODS[i.value]);
+  const base = p.base, rush = base * (s.k - 1), modSum = mods.reduce((a, m) => a + m.price, 0);
+  const total = base + rush + modSum;
+  const weeks = Math.max(3, Math.round(p.weeks * s.w));
+  const team = Math.min(14, Math.max(2, Math.round(total / weeks / 80000)));
+
+  Object.keys(SPEEDS).forEach(k => {
+    const el = $('[data-weeks="' + k + '"]');
+    if (el) el.textContent = Math.max(3, Math.round(p.weeks * SPEEDS[k].w));
+  });
+
+  setT('t-prod', p.name);
+  setT('t-time', weeks + ' нед. · ' + s.name);
+  setT('t-team', '~' + team + ' чел.');
+  setT('t-mods', mods.length ? String(mods.length) : 'нет');
+  setT('t-base', rub(base));
+  setT('t-rush-l', 'Срочность ×' + s.k.toFixed(2));
+  setT('t-rush', '+ ' + rub(rush));
+  setT('t-modsum', '+ ' + rub(modSum));
+  setT('t-range', 'Вилка ±12%: ' + nf.format(Math.round(total * .88 / 1000) * 1000) + ' – ' + rub(Math.round(total * 1.12 / 1000) * 1000));
+  tweenTotal(total);
+
+  $('#seg-base').style.width = (base / total * 100).toFixed(2) + '%';
+  $('#seg-rush').style.width = (rush / total * 100).toFixed(2) + '%';
+  $('#seg-mod').style.width = (modSum / total * 100).toFixed(2) + '%';
+
+  lastEstimate = { product: p.name, speed: s.name, weeks, mods: mods.map(m => m.name), total, ai: pk === 'ai' };
+
+  if (!initial) {
+    const st = $('#t-status-txt');
+    st.textContent = 'Пересчёт…';
+    clearTimeout(stT); stT = setTimeout(() => { st.textContent = 'Готово'; }, 340);
+    $('#sess').textContent = '0x' + Math.floor(Math.random() * 65535).toString(16).toUpperCase().padStart(4, '0');
+  }
+  clearTimeout(srT);
+  srT = setTimeout(() => {
+    $('#calcSr').textContent = 'Оценка: ' + p.name + ', ' + weeks + ' недель, итого ' + rub(total);
+  }, 600);
+}
+$$('#calc input').forEach(i => i.addEventListener('change', () => calc(false)));
+calc(true);
+
+function estimateString(e) {
+  return e.product + ' · ' + e.speed + ' (' + e.weeks + ' нед.) · ' +
+    (e.mods.length ? e.mods.length + ' мод.' : 'без модулей') + ' · ' + rub(e.total);
+}
+function budgetBucket(t) {
+  if (t < 2000000) return 'до 2 млн ₽';
+  if (t < 5000000) return '2–5 млн ₽';
+  if (t < 10000000) return '5–10 млн ₽';
+  return '10+ млн ₽';
+}
+
+/* =========================================================
+   FAQ
+   ========================================================= */
+const faqBtns = $$('.faq-q');
+faqBtns.forEach(btn => btn.addEventListener('click', () => {
+  const open = btn.getAttribute('aria-expanded') === 'true';
+  faqBtns.forEach(b => { b.setAttribute('aria-expanded', 'false'); b.closest('.faq-item').classList.remove('open'); });
+  if (!open) { btn.setAttribute('aria-expanded', 'true'); btn.closest('.faq-item').classList.add('open'); }
+}));
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+const modal = $('#modal'), form = $('#leadForm'), formView = $('#formView'), doneView = $('#doneView');
+const fName = $('#f-name'), fContact = $('#f-contact'), fTopic = $('#f-topic'), fBudget = $('#f-budget'), fAgree = $('#f-agree');
+const note = $('#estNote'), noteText = $('#estNoteText'), submitBtn = $('#submitBtn');
+let lastFocus = null, attached = null, submitting = false, closeT = 0;
+
+function resetModal() {
+  form.reset();
+  $$('.err', modal).forEach(e => { e.textContent = ''; });
+  $$('[aria-invalid]', modal).forEach(e => e.removeAttribute('aria-invalid'));
+  formView.hidden = false; doneView.hidden = true; note.hidden = true; attached = null;
+  submitBtn.disabled = false; submitBtn.querySelector('span').textContent = 'Отправить заявку';
+  submitting = false;
+  $('.modal-scroll', modal).scrollTop = 0;
+}
+function openModal(opener) {
+  lastFocus = opener || document.activeElement;
+  resetModal();
+  const d = (opener && opener.dataset) || {};
+  if (d.topic) fTopic.value = d.topic;
+  if (d.context === 'calc' && lastEstimate) {
+    attached = lastEstimate;
+    noteText.textContent = estimateString(lastEstimate);
+    note.hidden = false;
+    fTopic.value = lastEstimate.ai ? 'AI & Data' : 'Продуктовая инженерия';
+    fBudget.value = budgetBucket(lastEstimate.total);
+  }
+  const sw = innerWidth - document.documentElement.clientWidth;
+  document.body.style.paddingRight = sw > 0 ? sw + 'px' : '';
+  document.body.classList.add('lock');
+  clearTimeout(closeT);
+  modal.hidden = false;
+  void modal.offsetWidth;
+  modal.classList.add('open');
+  setTimeout(() => fName.focus({ preventScroll: true }), 80);
+}
+function closeModal() {
+  if (modal.hidden) return;
+  modal.classList.remove('open');
+  clearTimeout(closeT);
+  closeT = setTimeout(() => {
+    modal.hidden = true;
+    document.body.classList.remove('lock');
+    document.body.style.paddingRight = '';
+  }, reduced ? 0 : 200);
+  let f = lastFocus;
+  if (!f || !f.getClientRects || !f.getClientRects().length) f = burger;
+  try { f.focus({ preventScroll: true }); } catch (e) {}
+}
+document.addEventListener('click', e => {
+  const o = e.target.closest('[data-open-modal]');
+  if (o) { e.preventDefault(); openModal(o); return; }
+  if (e.target.closest('[data-close]') && !modal.hidden) { e.preventDefault(); closeModal(); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (!modal.hidden) closeModal();
+    else if (!mm.hidden) { setMenu(false); burger.focus(); }
+    return;
+  }
+  if (e.key === 'Tab' && !modal.hidden) {
+    const f = $$('button:not([disabled]),[href],input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])', modal)
+      .filter(el => el.getClientRects().length > 0);
+    if (!f.length) return;
+    const first = f[0], lastEl = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); lastEl.focus(); }
+    else if (!e.shiftKey && document.activeElement === lastEl) { e.preventDefault(); first.focus(); }
+    else if (!modal.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+  }
+});
+
+function setErr(input, msg) {
+  const e = document.getElementById(input.id + '-err');
+  if (e) e.textContent = msg || '';
+  if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
+  return !msg;
+}
+function validate() {
+  let ok = true, first = null;
+  const checks = [
+    [fName, v => v.trim().length >= 2 ? '' : 'Укажите имя — минимум 2 символа'],
+    [fContact, v => {
+      v = v.trim();
+      return (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) || /^@\w{4,}$/.test(v) || /^\+?[\d\s()\-]{7,}$/.test(v))
+        ? '' : 'Укажите email, @telegram или телефон';
+    }]
+  ];
+  checks.forEach(c => { if (!setErr(c[0], c[1](c[0].value))) { ok = false; first = first || c[0]; } });
+  if (!fAgree.checked) { setErr(fAgree, 'Необходимо согласие на обработку данных'); ok = false; first = first || fAgree; }
+  else setErr(fAgree, '');
+  if (first) first.focus();
+  return ok;
+}
+['input', 'change'].forEach(ev => form.addEventListener(ev, e => {
+  if (e.target.getAttribute && e.target.getAttribute('aria-invalid')) setErr(e.target, '');
+}));
+
+let toastT = 0;
+function showToast(msg) {
+  const t = $('#toast');
+  $('#toastText').textContent = msg;
+  t.hidden = false; void t.offsetWidth; t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => { t.classList.remove('show'); setTimeout(() => { t.hidden = true; }, 350); }, 6000);
+}
+function showDone() {
+  const id = 'KL-' + Math.floor(10000 + Math.random() * 89999);
+  $('#d-id').textContent = id;
+  $('#d-name').textContent = fName.value.trim();
+  $('#d-contact').textContent = fContact.value.trim();
+  $('#d-topic').textContent = fTopic.value;
+  const er = $('#d-est-row');
+  if (attached) { er.hidden = false; $('#d-est').textContent = estimateString(attached); } else er.hidden = true;
+  formView.hidden = true; doneView.hidden = false;
+  $('.modal-scroll', modal).scrollTop = 0;
+  $('#doneTitle').focus({ preventScroll: true });
+  showToast('Заявка ' + id + ' отправлена. Ответим в течение 24 часов.');
+}
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  if (submitting || !validate()) return;
+  submitting = true;
+  submitBtn.disabled = true;
+  submitBtn.querySelector('span').textContent = 'Отправка…';
+  setTimeout(showDone, reduced ? 0 : 900);
+});
+
+})();
+</script>
+</body>
+</html>
